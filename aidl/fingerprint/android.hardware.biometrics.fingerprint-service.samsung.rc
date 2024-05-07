@@ -1,5 +1,0 @@
-service vendor.fingerprint-default /vendor/bin/hw/android.hardware.biometrics.fingerprint-service.samsung
-    class hal
-    user system
-    group system input uhid
-    shutdown critical
