@@ -12,7 +12,8 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Switch
+import android.widget.CompoundButton
+import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -22,10 +23,9 @@ import androidx.preference.SwitchPreference
 import com.lineage.dolby.xiaomi.DolbyConstants.Companion.dlog
 import com.lineage.dolby.xiaomi.R
 import com.android.settingslib.widget.MainSwitchPreference
-import com.android.settingslib.widget.OnMainSwitchChangeListener
 
 class DolbySettingsFragment : PreferenceFragment(),
-    OnPreferenceChangeListener, OnMainSwitchChangeListener {
+    OnPreferenceChangeListener, OnCheckedChangeListener {
 
     private val switchBar by lazy {
         findPreference<MainSwitchPreference>(DolbyConstants.PREF_ENABLE)!!
@@ -125,14 +125,14 @@ class DolbySettingsFragment : PreferenceFragment(),
             true
         }
 
-        audioManager.registerAudioDeviceCallback(audioDeviceCallback, handler)
+        audioManager?.registerAudioDeviceCallback(audioDeviceCallback, handler)
         updateSpeakerState()
         updateProfileSpecificPrefs()
     }
 
     override fun onDestroyView() {
         dlog(TAG, "onDestroyView")
-        audioManager.unregisterAudioDeviceCallback(audioDeviceCallback)
+        audioManager?.unregisterAudioDeviceCallback(audioDeviceCallback)
         super.onDestroyView()
     }
 
@@ -179,7 +179,7 @@ class DolbySettingsFragment : PreferenceFragment(),
         return true
     }
 
-    override fun onSwitchChanged(switchView: Switch, isChecked: Boolean) {
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         dlog(TAG, "onSwitchChanged($isChecked)")
         dolbyController.dsOn = isChecked
         profilePref.setEnabled(isChecked)
@@ -187,8 +187,8 @@ class DolbySettingsFragment : PreferenceFragment(),
     }
 
     private fun updateSpeakerState() {
-        val device = audioManager.getDevicesForAttributes(ATTRIBUTES_MEDIA)[0]
-        isOnSpeaker = (device.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
+        val device = audioManager?.getDevicesForAttributes(ATTRIBUTES_MEDIA)?.get(0)
+        isOnSpeaker = (device?.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)
     }
 
     private fun updateProfileSpecificPrefs() {
