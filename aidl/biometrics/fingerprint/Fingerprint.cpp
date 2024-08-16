@@ -5,8 +5,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <android-base/properties.h>
 #include <android-base/logging.h>
 #include <cutils/properties.h>
+
+#include <cstdlib>
 
 #include "Fingerprint.h"
 
@@ -19,8 +22,7 @@ typedef struct fingerprint_hal {
 } fingerprint_hal_t;
 
 static const fingerprint_hal_t kModules[] = {
-    {"fingerprint.goodix_fod", NULL, FingerprintSensorType::UNDER_DISPLAY_OPTICAL},
-    {"fingerprint", NULL, FingerprintSensorType::UNDER_DISPLAY_OPTICAL},
+    {"fingerprint", "goodix_fod", FingerprintSensorType::UNDER_DISPLAY_OPTICAL},
 };
 
 }  // anonymous namespace
@@ -65,6 +67,11 @@ Fingerprint::Fingerprint()
 
         ALOGI("Opened fingerprint HAL, id %s, class %s", id_name, class_name);
         mSensorType = sensor_type;
+
+        // Set property based on sensor type
+        if (mSensorType == FingerprintSensorType::UNDER_DISPLAY_OPTICAL) {
+            ::android::base::SetProperty("persist.vendor.sys.fp.vendor", class_name);
+        }
         break;
     }
 
@@ -72,8 +79,7 @@ Fingerprint::Fingerprint()
         ALOGE("Can't open any HAL module");
     }
 
-    if (mSensorType == FingerprintSensorType::UNDER_DISPLAY_OPTICAL
-        || mSensorType == FingerprintSensorType::UNDER_DISPLAY_ULTRASONIC) {
+    if (mSensorType == FingerprintSensorType::UNDER_DISPLAY_OPTICAL) {
         mUdfpsHandlerFactory = getUdfpsHandlerFactory();
         if (!mUdfpsHandlerFactory) {
             ALOGE("Can't get UdfpsHandlerFactory");
