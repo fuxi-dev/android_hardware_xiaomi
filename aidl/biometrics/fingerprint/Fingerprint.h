@@ -48,6 +48,7 @@ private:
      * Xiaomi fingerprint extension command.
      */
     static int (*extCmd)(fingerprint_device_t* dev, int32_t cmd, int32_t param);
+    int remove(fingerprint_device_t* device, unsigned int userId, unsigned int fingerprintId);
 
     fingerprint_device_t* mDevice;
     UdfpsHandlerFactory* mUdfpsHandlerFactory;

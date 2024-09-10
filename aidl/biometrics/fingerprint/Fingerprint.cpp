@@ -154,6 +154,14 @@ fingerprint_device_t* Fingerprint::openHal(const char* id_name, const char* clas
     return fp_device;
 }
 
+int Fingerprint::remove(fingerprint_device_t* device, unsigned int userId, unsigned int fingerprintId) {
+    if (!device) {
+        return -1;
+    }
+    int result = device->remove(device, userId, fingerprintId);
+    return result;
+}
+
 void Fingerprint::notify(const fingerprint_msg_t* msg) {
     Fingerprint* thisPtr = sInstance;
     if (thisPtr == nullptr || thisPtr->mSession == nullptr || thisPtr->mSession->isClosed()) {
