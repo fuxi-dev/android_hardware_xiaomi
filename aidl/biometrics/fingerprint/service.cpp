@@ -17,7 +17,7 @@ int main() {
     ABinderProcess_setThreadPoolMaxThreadCount(0);
     std::shared_ptr<Fingerprint> fingerprint = ndk::SharedRefBase::make<Fingerprint>();
 
-    const std::string instance = std::string() + Fingerprint::descriptor + "/default";
+    const std::string instance = std::string() + Fingerprint::descriptor + "/virtual";
     binder_status_t status = AServiceManager_addService(fingerprint->asBinder().get(), instance.c_str());
     CHECK(status == STATUS_OK);
 
